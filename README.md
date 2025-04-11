@@ -10,4 +10,4 @@ Se crearon card, para los 20 elementos del arreglo.
 
 > Vista previa de los card
 
-![index](https://raw.githubusercontent.com/LuuOsorio/CH53_EjercicioDOM/refs/heads/main/images/index.jpg)
+![index](https://raw.githubusercontent.com/LuuOsorio/FetchAPI/refs/heads/main/images/productos.jpg)
