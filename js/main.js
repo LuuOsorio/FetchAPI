@@ -4,6 +4,7 @@ const URLCategories = "https://fakestoreapi.com/products/categories/";
 const mainProds = document.getElementById("mainProds");
 const ulMenu = document.getElementById("ulMenu");
 
+
 function getData(cat) {
     fetch(URLMain + cat)
         .then((respose) => {
