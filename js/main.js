@@ -1,78 +1,105 @@
-
 const main = document.getElementsByTagName("main").item(0);
-let mainPronds = document.getElementById("mainPronds");
-const URLMain = "https://fakestoreapi.com/products/"; //así debera ser el url
+const URLMain = "https://fakestoreapi.com/products/";
+const URLCategories = "https://fakestoreapi.com/products/categories/";
+const mainProds = document.getElementById("mainProds");
+const ulMenu = document.getElementById("ulMenu");
 
-
-function getData() {
-    const options = {"method" : "get"};
-    fetch(URLMain, options)    //fetch regresa una promesa
-
-        .then((response) => {
-            console.log(response);
-            response.json().then((res) => { // se convierte a JSON y manda una promesa
-                // console.log(res.length); //20
-                // console.log(res[5].title);
-                // console.log(res[5].price);
+function getData(cat) {
+    fetch(URLMain + cat)
+        .then((respose) => {
+            respose.json().then((res) => {
+                console.log(res.length);
                 createCards(res);
             });
+            console.log(respose);
         })
         .catch((err) => {
             main.insertAdjacentHTML("beforeend",
-                `<div class = "alert alert-danger" role="alert">
-            ${err.message0}
-            </div`);
-
+                `<div> class = "alert alert-danger" role = "alert">
+            ${err.message}
+            </div>`
+            );
         });
-
-
 }//getData
 
-getData(); //llamada a la funcion getData();
-
+function getCategories() {
+    const options = { "method": "GET" };
+    fetch(URLMain+"categories/", options)
+        .then((respose) => {
+            respose.json().then((res) => {
+                res.forEach((cat) => {
+                    ulMenu.insertAdjacentHTML("afterbegin",
+                        `
+                        <li>
+                            <a class = "dropdown-item" onclick = "getData('category/${cat.replace("'", "%27")}');" href = "#">
+                                ${cat}
+                            </a>
+                        </li>
+                        `
+                    );
+                })
+            });
+            console.log(respose);
+        })
+        .catch((err) => {
+            main.insertAdjacentHTML("afterbegin",
+                `<div> class = "alert alert-danger" role = "alert">
+            ${err.message}
+            </div>`
+            );
+        });
+}//getCategories
 
 function createCards(prods) {
+    
+    mainProds.innerHTML="";
+    
     prods.forEach((res) => {
-        main.insertAdjacentHTML("beforeend",
-            `<div class="card mb-3" style="max-width: 540px;">
-              <div class="row g-0">
-                <div class="col-md-4">
-                  <img src=${res.image} class="img-fluid rounded-start" alt=${res.title}>
-                </div>
-                <div class="col-md-8">
-                  <div class="card-body">
+        mainProds.insertAdjacentHTML("beforeend",
+            `
+            <div class="card" style="width: 18rem;">
+                <img class="card-img-top" src="${res.image}" alt="${res.title}">
+                <div class="card-body">
                     <h5 class="card-title">${res.title}</h5>
-                    <p class="card-text">${res.description}</p>
-                    <p class="card-text"><small class="text-body-secondary">$${res.price}</small></p>
+                    <p class="card-text">${res.description.slice(0, 100)}...</a>
+                    <p></p>
 
-                    
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    see moore
-                    </button>
-
-                    <!-- Modal -->
-
-                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">${res.title}</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                    ${res.description} </br>
-                    $${res.price}
-                    </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                    </div>
-                    </div>
-                    </div>
-                  </div>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#${res.id}Modal">
+                            see more
+                        </button>
                 </div>
-              </div>
-            </div>`);
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="${res.id}Modal" tabindex="-1" role="dialog" aria-labelledby="${res.id}ModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="${res.id}ModalLabel">Modal title</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            ${res.description}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            `
+        );
     });
-}
+}//createCards
+
+getData("");// se llama a la función getData
+getCategories();  // se llama a la funcion getCategories
+
+
+
+
